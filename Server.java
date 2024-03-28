@@ -1,6 +1,8 @@
 
 // Importa le classi necessarie per gestire input/output e networking.
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,8 +23,8 @@ public class Server {
                                                                    // specificata.
             System.out.println("Server avviato sulla porta " + PORT); // Stampa di conferma avvio server.
             while (true) { // Ciclo infinito per accettare connessioni in continuazione.
-                new ClientHandler(serverSocket.accept()).start(); // Crea e avvia un nuovo thread per ogni connessione
-                                                                  // accettata.
+                new ClientHandler(serverSocket.accept()).start(); // Crea e avvia un nuovo thread per ogni connessione accettata.
+                                                            
             }
         } catch (IOException e) { // Cattura eccezioni di I/O.
             e.printStackTrace(); // Stampa lo stack trace delle eccezioni catturate.
@@ -43,17 +45,22 @@ public class Server {
         @Override
         public void run() {
             try {
-                Scanner in = new Scanner(clientSocket.getInputStream()); // Scanner per leggere dati dal client.
-                out = new PrintWriter(clientSocket.getOutputStream(), true); // PrintWriter per inviare dati al client,
-                                                                             // con auto-flush.
+        
+                BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // Scanner per leggere dati dal client.
+                out = new PrintWriter(clientSocket.getOutputStream(), true); // PrintWriter per inviare dati al client con auto-flush.
+                String username = input.readLine();                                   
+                broadcast("L'utente " + username + " si e' appena connesso", out);
+                
                 clientWriters.add(out); // Aggiunge il PrintWriter all'insieme di client.
-
+                
+                
                 while (true) { // Ciclo infinito per leggere i messaggi in entrata.
-                    String message = in.nextLine(); // Legge la prossima riga di testo inviata dal client.
+                    String message = in.readLine(); // Legge la prossima riga di testo inviata dal client.
                     if (message.equalsIgnoreCase("exit")) { // Se il messaggio è "exit", termina il ciclo.
                         break;
                     }
-                    broadcast(message); // Invia il messaggio ricevuto a tutti i client connessi.
+                    broadcast(message, out); // Invia il messaggio ricevuto a tutti i client connessi.
                 }
             } catch (IOException e) { // Cattura eccezioni di I/O.
                 e.printStackTrace(); // Stampa lo stack trace delle eccezioni catturate.
@@ -70,10 +77,12 @@ public class Server {
         }
 
         // Metodo per inviare un messaggio a tutti i client connessi.
-        private void broadcast(String message) {
-            for (PrintWriter writer : clientWriters) { // Itera su tutti i PrintWriter dei client.
-                writer.println(message); // Invia il messaggio al client.
+        private void broadcast(String message, PrintWriter sender) {
+            for (PrintWriter writer : clientWriters) {
+                if (writer != sender) {
+                    writer.println(message);
+                }
             }
-        }
     }
+}
 }

@@ -22,7 +22,7 @@ public class Client {
         String serverIp = args[0]; // IP del server.
         int port = Integer.parseInt(args[1]); // Porta di connessione al server, convertita in un intero.
         String username = args[2]; // Username dell'utente.
-
+        
         // Tentativo di stabilire una connessione al server e di configurare gli stream
         // di input/output.
         try (Socket socket = new Socket(serverIp, port); // Crea un socket per connettersi al server.
@@ -33,7 +33,7 @@ public class Client {
 
             // Messaggio che indica la connessione riuscita al server.
             System.out.println("Connected to server. Start typing messages (type 'exit' to quit).");
-
+            out.println(username);
             // Creazione e avvio di un nuovo thread per ascoltare i messaggi dal server.
             Thread serverListener = new Thread(() -> {
                 try (Scanner in = new Scanner(socket.getInputStream())) { // Scanner per leggere i messaggi in entrata
