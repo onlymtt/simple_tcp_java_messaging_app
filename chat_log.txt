@@ -1,15 +1,7 @@
-Mattia: Ciao ciccio
+Ciccio: ciaoooo
+Ciccio: exit
+mattia: exit
+mattia: Ciao a tutti
 Ciccio: Ciao mattia
 Ciccio: exit
-Mattia: exit
-Mattia: ciao
-Ciccio: ciao
-Ciccio: exit
-Mattia: exit
-Mattia: cwonconoicn
-Ciccio: fwojjfnoif
-Mattia: exit
-Mattia: ocicoicinccw
-mattia: ciao
-Ciccio: ciao
-mattia: ciao
+mattia: exit

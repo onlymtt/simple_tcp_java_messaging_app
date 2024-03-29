@@ -59,7 +59,7 @@ public class Server {
                // String serverIp = input.readLine();     
                 InetSocketAddress socketAddress = (InetSocketAddress) clientSocket.getRemoteSocketAddress();
                 String clientIpAddress = socketAddress.getAddress().getHostAddress();                        
-                broadcast("L'utente " + username + " si e' appena connesso con IP " + clientIpAddress, out);
+                broadcastWelcome("L'utente " + username + " si e' appena connesso con IP " + clientIpAddress, out);
                 
                 clientWriters.add(out); // Aggiunge il PrintWriter all'insieme di client.
                 
@@ -90,11 +90,21 @@ public class Server {
         // Metodo per inviare un messaggio a tutti i client connessi.
         private void broadcast(String message, PrintWriter sender) {
             for (PrintWriter writer : clientWriters) {
-                if (writer != sender) {
+                
                     writer.println(message);
-                }
+                
             }
     }
+
+
+    // Metodo per inviare un messaggio a tutti i client connessi.
+    private void broadcastWelcome(String message, PrintWriter sender) {
+        for (PrintWriter writer : clientWriters) {
+            if (writer != sender) {
+                writer.println(message);
+            }
+        }
+}
 
     private void logMessage(String message) {
         try {
