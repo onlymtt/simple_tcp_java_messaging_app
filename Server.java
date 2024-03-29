@@ -71,7 +71,7 @@ public class Server {
                     }
                    
                     logMessage(message);
-                    broadcast(message, out); // Invia il messaggio ricevuto a tutti i client connessi.
+                    broadcast(message); // Invia il messaggio ricevuto a tutti i client connessi.
                 }
             } catch (IOException e) { // Cattura eccezioni di I/O.
                 e.printStackTrace(); // Stampa lo stack trace delle eccezioni catturate.
@@ -88,7 +88,7 @@ public class Server {
         }
 
         // Metodo per inviare un messaggio a tutti i client connessi.
-        private void broadcast(String message, PrintWriter sender) {
+        private void broadcast(String message) {
             for (PrintWriter writer : clientWriters) {
                 
                     writer.println(message);
