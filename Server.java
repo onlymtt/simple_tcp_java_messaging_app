@@ -1,9 +1,12 @@
 
 // Importa le classi necessarie per gestire input/output e networking.
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
@@ -17,10 +20,13 @@ public class Server {
     // Insieme dei PrintWriter, uno per ogni client connesso, per inviare messaggi.
     private static Set<PrintWriter> clientWriters = new HashSet<>();
 
+    private static final String LOG_FILE = "chat_log.txt";
+    private static BufferedWriter logWriter;
+
     // Metodo main, punto di ingresso del programma.
     public static void main(String[] args) {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) { // Prova ad aprire un ServerSocket sulla porta
-                                                                   // specificata.
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) { // Prova ad aprire un ServerSocket sulla porta specificata.
+            logWriter = new BufferedWriter(new FileWriter(LOG_FILE, true));                   
             System.out.println("Server avviato sulla porta " + PORT); // Stampa di conferma avvio server.
             while (true) { // Ciclo infinito per accettare connessioni in continuazione.
                 new ClientHandler(serverSocket.accept()).start(); // Crea e avvia un nuovo thread per ogni connessione accettata.
@@ -49,8 +55,11 @@ public class Server {
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // Scanner per leggere dati dal client.
                 out = new PrintWriter(clientSocket.getOutputStream(), true); // PrintWriter per inviare dati al client con auto-flush.
-                String username = input.readLine();                                   
-                broadcast("L'utente " + username + " si e' appena connesso", out);
+                String username = input.readLine();
+                String serverIp = input.readLine();     
+                InetSocketAddress socketAddress = (InetSocketAddress) clientSocket.getRemoteSocketAddress();
+                String clientIpAddress = socketAddress.getAddress().getHostAddress();                        
+                broadcast("L'utente " + username + " si e' appena connesso con IP " + clientIpAddress, out);
                 
                 clientWriters.add(out); // Aggiunge il PrintWriter all'insieme di client.
                 
@@ -60,6 +69,8 @@ public class Server {
                     if (message.equalsIgnoreCase("exit")) { // Se il messaggio è "exit", termina il ciclo.
                         break;
                     }
+                   
+                    logMessage(message);
                     broadcast(message, out); // Invia il messaggio ricevuto a tutti i client connessi.
                 }
             } catch (IOException e) { // Cattura eccezioni di I/O.
@@ -83,6 +94,15 @@ public class Server {
                     writer.println(message);
                 }
             }
+    }
+
+    private void logMessage(String message) {
+        try {
+            logWriter.write(message + "\n");
+            logWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 }
