@@ -34,7 +34,7 @@ public class Client {
             // Messaggio che indica la connessione riuscita al server.
             System.out.println("Connected to server. Start typing messages (type 'exit' to quit).");
             out.println(username);
-            out.println(serverIp);
+            
             // Creazione e avvio di un nuovo thread per ascoltare i messaggi dal server.
             Thread serverListener = new Thread(() -> {
                 try (Scanner in = new Scanner(socket.getInputStream())) { // Scanner per leggere i messaggi in entrata

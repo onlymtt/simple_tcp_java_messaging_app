@@ -52,11 +52,11 @@ public class Server {
         public void run() {
             try {
         
-                BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+              //  BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // Scanner per leggere dati dal client.
                 out = new PrintWriter(clientSocket.getOutputStream(), true); // PrintWriter per inviare dati al client con auto-flush.
-                String username = input.readLine();
-                String serverIp = input.readLine();     
+                String username = in.readLine();
+               // String serverIp = input.readLine();     
                 InetSocketAddress socketAddress = (InetSocketAddress) clientSocket.getRemoteSocketAddress();
                 String clientIpAddress = socketAddress.getAddress().getHostAddress();                        
                 broadcast("L'utente " + username + " si e' appena connesso con IP " + clientIpAddress, out);
